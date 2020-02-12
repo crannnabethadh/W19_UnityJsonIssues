@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private const string httpServer = "https://localhost:44364";
+    private const string httpServer = "https://localhost:44392";
     // cached references
     public Text idText;
     public InputField emailInputField;
