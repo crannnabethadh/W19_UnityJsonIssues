@@ -12,6 +12,7 @@ public class JsonTests : MonoBehaviour
     private const string httpServer = "https://localhost:44392";
 
     public InputField jsonInputField1;
+    public InputField jsonInputField2;
     public Text debugConsoleText;
 
     public void ReceiveJsonString()
@@ -41,8 +42,44 @@ public class JsonTests : MonoBehaviour
         // Better & quicker solution:
         string response = jsonResponse.Replace("\"", "");
         
-        debugConsoleText.text += "\nJsonTests > ReceiveJsonString: " + jsonResponse;
-        debugConsoleText.text += "\nJsonTests > ReceiveJsonString: " + response;
+        debugConsoleText.text += "\nJsonTests > ReceiveJsonString: \n\t" + jsonResponse;
+        debugConsoleText.text += "\nJsonTests > ReceiveJsonString: \n\t" + response;
+    }
+
+    public void ReceiveJsonListOfString()
+    {
+        UnityWebRequest httpClient = new UnityWebRequest(httpServer + "/api/Values/GetListOfString", "GET");
+        httpClient.downloadHandler = new DownloadHandlerBuffer();
+        //httpClient.SetRequestHeader("Content-Type", "application/json");
+        httpClient.SetRequestHeader("Accept", "application/json");
+        httpClient.SendWebRequest();
+        while (!httpClient.isDone)
+        {
+            Task.Delay(1);
+        }
+        if (httpClient.isHttpError || httpClient.isNetworkError)
+        {
+            throw new Exception("ReceiveJsonListString: " + httpClient.error);
+        }
+
+        string jsonResponse = httpClient.downloadHandler.text;
+
+        //List<string> listOfString = JsonUtility.FromJson<List<string>>(jsonResponse);
+        // ArgumentException: JSON must represent an object type.
+
+        //string response = "{" + jsonResponse + "}";
+        // ArgumentException: JSON parse error: Missing a name for object member.
+
+        // Solution:
+        string response = "{\"receivedListOfString\":" + jsonResponse + "}";
+        ListOfStringModel listOfString = JsonUtility.FromJson<ListOfStringModel>(response);  // Deserialize object
+
+        debugConsoleText.text += "\nJsonTests > ReceiveJsonListOfString: ";
+        foreach (string str in listOfString.receivedListOfString)
+        {
+            debugConsoleText.text += "\n\t" + str;
+        }
+        
     }
 
     public void SendJsonString()
@@ -76,4 +113,33 @@ public class JsonTests : MonoBehaviour
         debugConsoleText.text += "\nJsonTests > SendJsonString: " + httpClient.responseCode;
     }
 
+    public void SendJsonListOfString()
+    {
+        UnityWebRequest httpClient = new UnityWebRequest(httpServer + "/api/Values/PostListOfString", "POST");
+        //httpClient.downloadHandler = new DownloadHandlerBuffer();
+
+        ListOfStringModel listOfString = new ListOfStringModel();
+        listOfString.receivedListOfString.Add(jsonInputField1.text);
+        listOfString.receivedListOfString.Add(jsonInputField2.text);
+
+        
+        string jsonString = JsonUtility.ToJson(listOfString); // Serialize object
+        byte[] data = Encoding.UTF8.GetBytes(jsonString);
+
+        httpClient.uploadHandler = new UploadHandlerRaw(data);
+
+        httpClient.SetRequestHeader("Content-Type", "application/json");
+        //httpClient.SetRequestHeader("Accept", "application/json");
+        httpClient.SendWebRequest(); // ERROR: API receives null. ???
+        while (!httpClient.isDone)
+        {
+            Task.Delay(1);
+        }
+        if (httpClient.isHttpError || httpClient.isNetworkError)
+        {
+            throw new Exception("JsonTests > SendJsonString: " + httpClient.error);
+        }
+
+        debugConsoleText.text += "\nJsonTests > SendJsonString: " + httpClient.responseCode;
+    }
 }
