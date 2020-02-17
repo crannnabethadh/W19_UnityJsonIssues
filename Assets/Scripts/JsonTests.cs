@@ -63,19 +63,28 @@ public class JsonTests : MonoBehaviour
         }
 
         string jsonResponse = httpClient.downloadHandler.text;
+        // {["Hello json","Happy St. Vals day <3"]}
 
         //List<string> listOfString = JsonUtility.FromJson<List<string>>(jsonResponse);
         // ArgumentException: JSON must represent an object type.
 
         //string response = "{" + jsonResponse + "}";
+        //List<string> listOfString = JsonUtility.FromJson<List<string>>(response);
         // ArgumentException: JSON parse error: Missing a name for object member.
+        // {"myStrings":["Hello json","Happy St. Vals day <3"]}
+
+        //string response = "{\"myStrings\":" + jsonResponse + "}";
+        //List<string> listOfString = JsonUtility.FromJson<List<string>>(response);
+        // listOfString is empty; Count = 0
+
 
         // Solution:
-        string response = "{\"receivedListOfString\":" + jsonResponse + "}";
-        ListOfStringModel listOfString = JsonUtility.FromJson<ListOfStringModel>(response);  // Deserialize object
+        string response = "{\"myStrings\":" + jsonResponse + "}";
+        ListOfStringModel listOfString =
+            JsonUtility.FromJson<ListOfStringModel>(response);  // Deserialize object
 
         debugConsoleText.text += "\nJsonTests > ReceiveJsonListOfString: ";
-        foreach (string str in listOfString.receivedListOfString)
+        foreach (string str in listOfString.myStrings)
         {
             debugConsoleText.text += "\n\t" + str;
         }
@@ -119,8 +128,8 @@ public class JsonTests : MonoBehaviour
         //httpClient.downloadHandler = new DownloadHandlerBuffer();
 
         ListOfStringModel listOfString = new ListOfStringModel();
-        listOfString.receivedListOfString.Add(jsonInputField1.text);
-        listOfString.receivedListOfString.Add(jsonInputField2.text);
+        listOfString.myStrings.Add(jsonInputField1.text);
+        listOfString.myStrings.Add(jsonInputField2.text);
 
         
         string jsonString = JsonUtility.ToJson(listOfString); // Serialize object
