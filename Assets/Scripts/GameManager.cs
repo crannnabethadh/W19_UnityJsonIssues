@@ -20,8 +20,9 @@ public class GameManager : MonoBehaviour
     public InputField cityInputField;
     public InputField dateOfBirthInputField;
     public Text dateJoinedText;
+    public Text debugConsoleText;
 
-    public Player player;
+    public PlayerSerializable player;
     private string token;
 
     // Start is called before the first frame update
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
                 yield return GetAspNetUserId();
                 yield return InsertPlayer();
                 yield return GetPlayerDateJoined();
+                debugConsoleText.text += "\nPlayer successfully registered.";
             }
         }
     }

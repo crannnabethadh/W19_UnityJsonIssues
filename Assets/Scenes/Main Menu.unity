@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -2883,6 +2884,8 @@ MonoBehaviour:
     LastName: 
     NickName: 
     City: 
+    DateOfBirth: 
+    DateJoined: 
     BlobUri: 
 --- !u!4 &1725320125
 Transform:
@@ -3043,7 +3046,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Nickname*...
+  m_Text: City...
 --- !u!222 &1980632904
 CanvasRenderer:
   m_ObjectHideFlags: 0
