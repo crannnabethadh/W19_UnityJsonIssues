@@ -53,11 +53,20 @@ public class GameManager : MonoBehaviour
                 yield return GetAspNetUserId();
                 yield return InsertPlayer();
                 yield return GetPlayerDateJoined();
+                GetPlayerAge();
                 debugConsoleText.text += "\nPlayer successfully registered.";
             }
         }
     }
 
+    private void GetPlayerAge()
+    {
+        DateTime birthday = DateTime.Parse(player.DateOfBirth);
+        DateTime today = DateTime.Now;
+        TimeSpan difference = today - birthday;
+        debugConsoleText.text += "\nPlayer is " + difference.Days/365 +
+            " years and " + difference.Days%365 + " days old";
+    }
 
     private IEnumerator RegisterAspNetUser()
     {
@@ -153,7 +162,7 @@ public class GameManager : MonoBehaviour
             string playerData = JsonUtility.ToJson(player);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(playerData);
             httpClient.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            httpClient.downloadHandler = new DownloadHandlerBuffer();
+            //httpClient.downloadHandler = new DownloadHandlerBuffer();
             httpClient.SetRequestHeader("Content-type", "application/json");
             httpClient.SetRequestHeader("Authorization", "bearer " + token);
 
